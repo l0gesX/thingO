@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Card</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://wallpapercave.com/wp/wp15107841.webp');
+            background-size: cover;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            width: 320px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(255, 140, 200, 1),
+                        0 0 100px rgba(255, 25, 22, 1);
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-banner {
+            background-image: linear-gradient(45deg, #845ec2, #d65db1, #ff6f91, #ff9671, #ffc75f, #f9f871);
+            height: 120px;
+        }
+
+        .card-content {
+            padding: 1rem 1.5rem 2rem;
+            margin-top: -60px;
+        }
+
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            object-fit: cover;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .button {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background-color: #845ec2;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .button:hover {
+            background-color: #302049fd;
+        }
+
+        /* ---------- BIG POPUP ---------- */
+        dialog {
+            width: 90vw;
+            height: 90vh;
+            max-width: none;
+            max-height: none;
+            border: none;
+            border-radius: 20px;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        #closeBtn {
+            position: absolute;
+            top: 16px;
+            right: 24px;
+            font-size: 36px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .marquee {
+            position: fixed;
+            top: 11%;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            padding: 10px 0;
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: scroll 12s linear infinite;
+        }
+
+        .marquee-track span {
+            min-width: 100vw;
+            display: flex;
+            justify-content: space-around;
+            white-space: nowrap;
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-shadow: 0 0 8px rgb(170, 248, 81);
+        }
+
+        @keyframes scroll {
+            from { transform: translateX(-50%); }
+            to   { transform: translateX(0); }
+        }
+
+
+        dialog[open] {
+            display: flex;
+            overflow-y: auto;
+        }
+
+        .walls {
+            width: 90%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 32px;
+            padding: 24px;
+            background: #f6f3fc;
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        .media {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        img.slide { object-fit: cover; }
+        .slide.active { display: block; }
+
+        .nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 2;
+        }
+        #prev { left: 12px; }
+        #next { right: 12px; }
+
+        .dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            background: #c9bde6;
+            cursor: pointer;
+        }
+        .dot.active { background: #845ec2; }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .info h2 { font-size: 2rem; }
+
+        .add-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: white;
+            background-image: linear-gradient(45deg, #845ec2, #d65db1, #ff6f91);
+            box-shadow: 0 6px 20px rgba(132, 94, 194, 0.45);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(214, 93, 177, 0.6);
+            filter: brightness(1.08);
+        }
+
+        .add-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(132, 94, 194, 0.4);
+        }
+
+        .info h3 {
+            margin: 0 0 0.6rem;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .features {
+            margin: 0 0 1.5rem;
+            padding: 0;
+            list-style: none;
+        }
+
+        .features li {
+            position: relative;
+            padding-left: 1.6rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #845ec2;
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="marquee">
+        <div class="marquee-track">
+            <span><b>/// Place Holder ///</b><b>/// Place Holder ///</b></span>
+            <span><b>/// Place Holder ///</b><b>/// Place Holder ///</b></span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-banner"></div>
+        <div class="card-content">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.ze4YIT2BjZF5cgCPD_XhlQHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Profile" class="profile-image">
+            <h2>GODLY</h2>
+            <p>fill this in later</p>
+            <a href="#" class="button" id="openBtn">See Inside</a>
+        </div>
+    </div>
+
+    <dialog id="bigCard">
+        <button id="closeBtn">&times;</button>
+
+        <div class="walls">
+           <div class="gallery">
+                <div class="media">
+                    <video class="slide" controls preload="metadata" poster="appleImage1.png">
+                        <source src="AbhismalSeigesisiousClip.mp4" type="video/mp4">
+                    </video>
+                    <img class="slide" src="appleImage1.png" alt="">
+                    <img class="slide" src="bigBad.jpg" alt="">
+                    <button class="nav" id="prev">&#10094;</button>
+                    <button class="nav" id="next">&#10095;</button>
+                </div>
+                <div class="dots" id="dots"></div>
+            </div>
+
+            <div class="info">
+                <h2>Idk what to call this</h2>
+                <p>So bassiacy this dose things and uyou shoould buy it once its done it not done yet lkook agfain in like 300 months then beta tesing will start!!!!!!!!!!</p>
+
+                <h3>Features</h3>
+                <ul class="features">
+                    <li>thing one</li>
+                    <li>thing two</li>
+                    <li>thing three</li>
+                </ul>
+
+                <button class="button add-btn">Add to Cart</button>
+            </div>
+
+        </div>
+    </dialog>
+
+    <script>
+        const bigCard = document.getElementById('bigCard');
+
+        const video = document.querySelector('video.slide');
+        video.volume = 0.2;                 // 0 = silent, 1 = full
+
+        document.getElementById('openBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            bigCard.showModal();
+            show(0);                        // jump to the video slide
+            video.currentTime = 0;          // start from the beginning
+            video.play().catch(() => {});
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function () {
+            bigCard.close();
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const dotsBox = document.getElementById('dots');
+        let current = 0;
+
+        slides.forEach((_, i) => {
+            const d = document.createElement('button');
+            d.className = 'dot';
+            d.onclick = () => show(i);
+            dotsBox.appendChild(d);
+        });
+
+        function show(i) {
+            current = (i + slides.length) % slides.length;
+            slides.forEach((s, idx) => {
+                s.classList.toggle('active', idx === current);
+                if (s.tagName === 'VIDEO' && idx !== current) s.pause();
+            });
+            document.querySelectorAll('.dot').forEach((d, idx) => {
+                d.classList.toggle('active', idx === current);
+            });
+        }
+
+        document.getElementById('prev').onclick = () => show(current - 1);
+        document.getElementById('next').onclick = () => show(current + 1);
+        show(0);
+
+        bigCard.addEventListener('close', () => {
+            slides.forEach(s => { if (s.tagName === 'VIDEO') s.pause(); });
+        });
+    </script>
+</body>
+</html>
